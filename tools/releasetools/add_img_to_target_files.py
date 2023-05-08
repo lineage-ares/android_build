@@ -612,18 +612,29 @@ def CheckAbOtaImages(output_zip, ab_partitions):
   """
   for partition in ab_partitions:
     img_name = partition + ".img"
+    bin_name = partition + ".bin"
 
     # Assert that the image is present under IMAGES/ now.
     if output_zip:
       # Zip spec says: All slashes MUST be forward slashes.
       images_path = "IMAGES/" + img_name
       radio_path = "RADIO/" + img_name
+      bin_images_path = "IMAGES/" + bin_name
+      bin_radio_path = "RADIO/" + bin_name
       available = (images_path in output_zip.namelist() or
-                   radio_path in output_zip.namelist())
+                   radio_path in output_zip.namelist() or 
+                   bin_images_path in output_zip.namelist() or
+                   bin_radio_path in output_zip.namelist())
+
     else:
       images_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
       radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
-      available = os.path.exists(images_path) or os.path.exists(radio_path)
+      bin_images_path = os.path.join(OPTIONS.input_tmp, "IMAGES", bin_name)
+      bin_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", bin_name)
+      available = (os.path.exists(images_path) or
+                   os.path.exists(radio_path) or 
+                   os.path.exists(bin_images_path) or 
+                   os.path.exists(bin_radio_path))
 
     assert available, "Failed to find " + img_name
 
